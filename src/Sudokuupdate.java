@@ -58,7 +58,7 @@ import java.lang.*;
 			for (int i = 1; i <= n; i++) {
 				ens[i] = true;
 			}
-			Ut.afficher(ens);
+			//Ut.afficher(ens);
 			return ens;
 		}  // fin ensPlein
 
@@ -80,7 +80,7 @@ import java.lang.*;
 					result = true;
 				}
 			}
-			Ut.afficher(ens);
+			//Ut.afficher(ens);
 			return result;
 		}  // fin supprime
 
@@ -95,7 +95,9 @@ import java.lang.*;
 		public static boolean uneValeur(boolean[] ens) {
 
 			for(int i = 0; i< ens.length; i++){
-				return ens[i];
+				if (ens[i] == true){
+					return ens[i];
+				}
 			}
 			return false;
 		}  // fin uneValeur
@@ -191,7 +193,7 @@ import java.lang.*;
 			int[] coordDebCarre = new int[2];
 			coordDebCarre[0]=(i/k) *k;
 			coordDebCarre[1]=(j/k) * k;
-			Ut.afficher(coordDebCarre);
+			//Ut.afficher(coordDebCarre);
 			return coordDebCarre;
 		}  // fin debCarre
 
@@ -259,7 +261,7 @@ import java.lang.*;
 
 		public static int [][] saisirGrilleIncomplete(int nbTrous){
 
-		int [][] grille = new int[9][9];
+		int [][] grille = new int[2][2];
 		int compteurDeTrous = 0;
 
 		while (compteurDeTrous != nbTrous){
@@ -275,7 +277,7 @@ import java.lang.*;
 			}
 		}
 
-		Ut.afficher(grille);
+		//Ut.afficher(grille);
 		return grille;
 
 		   //demande a l'utilisateur de saisir 81 caractere et lui dis de recommencer si le nombre de trou qu'il a mis correspond pas a nbtrous
@@ -380,9 +382,9 @@ import java.lang.*;
 
 
 		/** pré-requis : gSecret, gHumain et gOrdi sont des grilles 9x9
-		 *  action :     - demande au joueur humain de saisir le nombre nbTrous compris entre 0 et 81,
-		 *               - met dans gSecret une grille de Sudoku complète,
-		 *               - met dans gHumain une grille de Sudoku incomplète, pouvant être complétée en gSecret
+		 *  action :    OK - demande au joueur humain de saisir le nombre nbTrous compris entre 0 et 81,
+		 *             OK  - met dans gSecret une grille de Sudoku complète,
+		 *              OK  - met dans gHumain une grille de Sudoku incomplète, pouvant être complétée en gSecret
 		 *                  et ayant exactement nbTrous trous de positions aléatoires,
 		 *               - met dans gOrdi une grille de Sudoku incomplète saisie par le joueur humain
 		 *                  ayant  nbTrous trous,
@@ -390,9 +392,37 @@ import java.lang.*;
 		 *                  et leur nombre dans nbValPoss.
 		 * retour : la valeur de nbTrous
 		 */
-		/*public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-			//______________________________________________________________________________________________
+		public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
 
+			int [][] gComplete =   {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
+									{ 6, 7, 2, 1, 9, 5, 3, 4, 8 },
+									{ 1, 9, 8, 3, 4, 2, 5, 6, 7 },
+									{ 8, 5, 9, 7, 6, 1, 4, 2, 3 },
+									{ 4, 2, 6, 8, 5, 3, 7, 9, 1 },
+									{ 7, 1, 3, 9, 2, 4, 8, 5, 6 },
+									{ 9, 6, 1, 5, 3, 7, 2, 8, 4 },
+									{ 2, 8, 7, 4, 1, 9, 6, 3, 5 },
+									{ 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
+
+			/* demande le nombre de trou */
+			int nbTrou = saisirEntierMinMax(0,81);
+			copieMatrice(gComplete,gSecret);
+
+
+			initGrilleIncomplete(nbTrou, gSecret,gHumain);
+
+
+			gOrdi = saisirGrilleIncomplete(nbTrou);
+
+			initPossibles(gOrdi,valPossibles,nbValPoss);
+
+			/*Ut.afficher(gHumain);
+			System.out.println("");
+			Ut.afficher(gSecret);
+			System.out.println("");
+			Ut.afficher(gOrdi);*/
+
+			return nbTrou;
 		}
 
 		//...........................................................
@@ -406,9 +436,36 @@ import java.lang.*;
 		 *
 		 *  action :     effectue un tour du joueur humain
 		 */
-		/*public static int tourHumain(int [][] gSecret, int [][] gHumain){
-			//___________________________________________________________________
+		public static int tourHumain(int [][] gSecret, int [][] gHumain){
 
+			int nbPenalitee = 0;
+			int i,j;
+			do {
+				System.out.println("Veuillez entrée les coordonnées du point que vous voulez modifié en commencant par la ligne puis la colonne: ");
+				System.out.println("");
+				afficheGrille(3, gHumain);
+				System.out.println("");
+				 i = saisirEntierMinMax(0, 9);
+				 j = saisirEntierMinMax(0, 9);
+			}while(gHumain[i][j] == 0);
+
+			System.out.println("Voulez vous un joker ? tapée '1' pour oui et '0' pour non ");
+			int joker = saisirEntierMinMax(0, 1);
+			if (joker == 1) {
+				nbPenalitee++;
+				gHumain[i - 1][j - 1] = gSecret[i - 1][j - 1];
+				afficheGrille(3, gHumain);
+				return nbPenalitee;
+			}
+
+			do {
+				gHumain[i - 1][j - 1] = saisirEntierMinMax(1, 9);
+				nbPenalitee++;
+			}while (gHumain[i - 1][j - 1] != gSecret[i - 1][j - 1]);
+			afficheGrille(3, gHumain);
+
+			System.out.println(nbPenalitee);
+			return nbPenalitee;
 		}  // fin  tourHumain
 
 		//.........................................................................
@@ -422,9 +479,22 @@ import java.lang.*;
 		 *                s'il y en a, sinon le premier trou de gOrdi dans l'ordre des lignes
 		 *
 		 */
-		/*public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
-			//___________________________________________________________________
+		public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
+			int[] trou = new int[2];
 
+			for(int i = 0;i<gOrdi.length;i++) {
+				for (int j = 0; j < gOrdi[i].length; j++) {
+					if (gOrdi[i][j] == 0) {
+						trou[0] = i;
+						trou[1] = j;
+
+						if (nbValPoss[i][j] == 1) {
+							return trou;
+						}
+					}
+				}
+			}
+			return trou; //renvoie le dernier trou trouvée malheureusement
 		}  // fin chercheTrou
 
 		//.........................................................................
@@ -465,7 +535,7 @@ import java.lang.*;
 
 		public static void main(String[] args){
 
-			int [][] mat1 =   {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
+			int [][] gSecret= {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
 							   { 6, 7, 2, 1, 9, 5, 3, 4, 8 },
 							   { 1, 9, 8, 3, 4, 2, 5, 6, 7 },
 							   { 8, 5, 9, 7, 6, 1, 4, 2, 3 },
@@ -493,7 +563,22 @@ import java.lang.*;
 									{0, 0, 0, 4, 1, 9, 0, 0, 5},
 									{0, 0, 0, 0, 8, 0, 0, 7, 9}};
 
+
+			int [][] gHumain2 = new int[gOrdi.length][gOrdi.length];
+
+			int[][] gHumain =  {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
+								{ 6, 7, 0, 1, 9, 5, 3, 4, 8 },
+								{ 1, 9, 0, 3, 0, 2, 5, 6, 7 },
+								{ 8, 5, 9, 7, 6, 1, 4, 2, 3 },
+								{ 4, 2, 6, 8, 5, 3, 7, 9, 1 },
+								{ 7, 1, 3, 9, 2, 4, 8, 5, 6 },
+								{ 9, 0, 1, 5, 3, 7, 2, 8, 4 },
+								{ 2, 8, 7, 4, 1, 9, 6, 3, 5 },
+								{ 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
+
 			boolean [][][] valPossible = new boolean [9][9][9];
+
+			int [][] nbValPoss = new int[9][9];
 
 
 
@@ -508,7 +593,11 @@ import java.lang.*;
 			//initGrilleIncomplete(20,mat1,gComplete);
 			//saisirGrilleIncomplete(1);
 			//initPleines(gOrdi, valPossible, mat2);
-			suppValPoss(gOrdi,1,1,valPossible,mat2);
+			//suppValPoss(gOrdi,1,1,valPossible,mat2);
+			//initPossibles(gOrdi, valPossible,nbValPoss);
+			//initPartie(gSecret, gHumain, gOrdi, valPossible, nbValPoss);
+			//tourHumain(gSecret, gHumain);
+			chercheTrou(gOrdi,nbValPoss);
 
 
 		}  // fin main
