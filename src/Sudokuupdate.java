@@ -480,21 +480,25 @@ import java.lang.*;
 		 *
 		 */
 		public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
-			int[] trou = new int[2];
+
+			int itemporaire = -10;
+			int jtemporaire = -10;
 
 			for(int i = 0;i<gOrdi.length;i++) {
 				for (int j = 0; j < gOrdi[i].length; j++) {
-					if (gOrdi[i][j] == 0) {
-						trou[0] = i;
-						trou[1] = j;
 
+					if (gOrdi[i][j] == 0) {
 						if (nbValPoss[i][j] == 1) {
-							return trou;
+							return new int[]{i, j};
+						}
+						if (itemporaire == -10) {
+							itemporaire = i;
+							jtemporaire = j;
 						}
 					}
 				}
 			}
-			return trou; //renvoie le dernier trou trouvée malheureusement
+			return new int[] {itemporaire,jtemporaire} ;
 		}  // fin chercheTrou
 
 		//.........................................................................
@@ -504,8 +508,19 @@ import java.lang.*;
 		 *               et nbValPoss est une matrice 9x9 d'entiers
 		 *  action :     effectue un tour de l'ordinateur
 		 */
-		/*public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-			//________________________________________________________________________________________________
+		public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+
+
+			int nbPenalitee = 0;
+			int[] trou = chercheTrou(gOrdi, nbValPoss);
+
+			if( nbValPoss[trou[0]][trou[1]] == 1){
+				gOrdi[trou[0]][trou[1]] = gSecret[][];
+			}
+
+
+
+			return nbPenalitee;
 
 		}  // fin tourOrdinateur
 
@@ -520,8 +535,9 @@ import java.lang.*;
 		 *
 		 *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
 		 */
+
 		/*public static int partie(){
-			//_____________________________
+
 
 		}  // fin partie
 
@@ -597,7 +613,9 @@ import java.lang.*;
 			//initPossibles(gOrdi, valPossible,nbValPoss);
 			//initPartie(gSecret, gHumain, gOrdi, valPossible, nbValPoss);
 			//tourHumain(gSecret, gHumain);
-			chercheTrou(gOrdi,nbValPoss);
+			afficheGrille(3, gOrdi);
+			System.out.println(" ");
+			System.out.println(chercheTrou(gOrdi,nbValPoss));
 
 
 		}  // fin main
