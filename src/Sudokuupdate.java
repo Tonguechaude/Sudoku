@@ -508,7 +508,7 @@ import java.lang.*;
 		 *               et nbValPoss est une matrice 9x9 d'entiers
 		 *  action :     effectue un tour de l'ordinateur
 		 */
-		public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+		/*public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
 
 
 			int nbPenalitee = 0;
