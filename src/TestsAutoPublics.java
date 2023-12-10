@@ -127,7 +127,7 @@ public class TestsAutoPublics {
                     {9,1,2,3,4,5,6,7,8} };
             int [][] gi = new int[9][9];
 
-            Sudokuupdate.initGrilleIncomplete(73,gc,gi);
+            SudokuBase.initGrilleIncomplete(73,gc,gi);
 
             int nbTrous = 0;
             for (int [] ligne : gi) {

@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.lang.*;
 
@@ -286,6 +289,30 @@ public class SudokuBase {
 
         //.........................................................................
 
+        /** MODIFICI
+        *  pré-requis : 0 <= nbTrous <= 81 ; g est une grille 9x9 (vide a priori) ;
+        *               fic est un nom de fichier de ce répertoire contenant des valeurs de Sudoku
+        *  action :   remplit g avec les valeurs lues dans fic. Si la grille ne contient pas des valeurs
+        *             entre 0 et 9 ou n'a pas exactement nbTrous valeurs nulles, la méthode doit signaler l'erreur,
+        *             et l'utilisateur doit corriger le fichier jusqu'à ce que ces conditions soient vérifiées.
+        *             On suppose dans la version de base que la grille saisie est bien une grille de Sudoku incomplète.
+        */
+        public static void saisirGrilleIncompleteFichier(int nbTrous, int [][] g, String fic){
+            //_________________________________________________
+
+            try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {
+                for (int i = 0 ; i < 9 ; i++){
+                    String ligne = lecteur.readLine();
+                    String [] valeurs = ligne.split("\\s+");
+                    for (int j = 0 ; j < 9 ; j++) {
+                        g[i][j] = Integer.parseInt(valeurs[j]);
+                        // Des tests d'erreur sont à ajouter quelque part !
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } // fin saisirGrilleIncompleteFichier
 
 
         /** pré-requis : gOrdi est une grille de Sudoku incomplète,
@@ -328,7 +355,7 @@ public class SudokuBase {
 
         public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
 
-            for(int colonne = i;colonne< gOrdi.length;colonne++){
+            /*for(int colonne = i;colonne< gOrdi.length;colonne++){
                 if (gOrdi[i][colonne]==0){
                     supprime(valPossibles[i][j],gOrdi[i][j]);
                     nbValPoss[i][colonne]--;
@@ -347,10 +374,42 @@ public class SudokuBase {
                 for(int colonne = debutcarre[1]; colonne < debutcarre[1] + 3; colonne ++){
                     if(ligne != i || colonne != j){
                         supprime(valPossibles[ligne][colonne],gOrdi[i][j]);
+                        nbValPoss[ligne][colonne]--;
+                    }
+                }
+            }*/
+
+            int valeur = gOrdi[i][j];
+
+            // Supprimer la valeur de la ligne
+            for (int colonne = 0; colonne < 9; colonne++) {
+                if (gOrdi[i][colonne] == 0) {
+                    valPossibles[i][colonne][valeur] = false;
+                    nbValPoss[i][colonne]--;
+                }
+            }
+
+            // Supprimer la valeur de la colonne
+            for (int ligne = 0; ligne < 9; ligne++) {
+                if (gOrdi[ligne][j] == 0) {
+                    valPossibles[ligne][j][valeur] = false;
+                    nbValPoss[ligne][j]--;
+                }
+            }
+
+            // Supprimer la valeur du carré
+            int carreLigne = 3 * (i / 3);
+            int carreColonne = 3 * (j / 3);
+
+            for (int ligne = carreLigne; ligne < carreLigne + 3; ligne++) {
+                for (int colonne = carreColonne; colonne < carreColonne + 3; colonne++) {
+                    if (gOrdi[ligne][colonne] == 0) {
+                        valPossibles[ligne][colonne][valeur] = false;
+                        nbValPoss[ligne][colonne]--;
                     }
                 }
             }
-        }  // fin suppValPoss
+        } // fin suppValPoss
 
 
         //.........................................................................
@@ -509,15 +568,20 @@ public class SudokuBase {
          *               et nbValPoss est une matrice 9x9 d'entiers
          *  action :     effectue un tour de l'ordinateur
          */
-		/*public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+		public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
 
 
 			int nbPenalitee = 0;
 			int[] trou = chercheTrou(gOrdi, nbValPoss);
 
 			if( nbValPoss[trou[0]][trou[1]] == 1){
-				gOrdi[trou[0]][trou[1]] = gSecret[][];
+				gOrdi[trou[0]][trou[1]] = nbValPoss[trou[0]][trou[1]];
 			}
+            else{
+                nbPenalitee ++;
+                System.out.println("L'ordinateur a choisis de prendre un joker, veuillez lui renseigner la case: " + trou);
+                saisirEntierMinMax(1,9);
+            }
 
 
 
@@ -537,7 +601,8 @@ public class SudokuBase {
 		 *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
 		 */
 
-		/*public static int partie(){
+		public static int partie(){
+
 
 
 		}  // fin partie
