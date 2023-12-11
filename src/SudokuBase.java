@@ -337,6 +337,7 @@ public class SudokuBase {
                     }
                 }
             }
+
             //Ut.afficher(valPossibles);
             //Ut.afficher(nbValPoss);
 
@@ -384,7 +385,7 @@ public class SudokuBase {
             // Supprimer la valeur de la ligne
             for (int colonne = 0; colonne < 9; colonne++) {
                 if (gOrdi[i][colonne] == 0) {
-                    valPossibles[i][colonne][valeur] = false;
+                    supprime(valPossibles[i][colonne],gOrdi[i][j]);
                     nbValPoss[i][colonne]--;
                 }
             }
@@ -392,7 +393,7 @@ public class SudokuBase {
             // Supprimer la valeur de la colonne
             for (int ligne = 0; ligne < 9; ligne++) {
                 if (gOrdi[ligne][j] == 0) {
-                    valPossibles[ligne][j][valeur] = false;
+                    supprime(valPossibles[ligne][j],gOrdi[i][j]);
                     nbValPoss[ligne][j]--;
                 }
             }
@@ -425,11 +426,12 @@ public class SudokuBase {
 
             // parcourir la grille entiere et pour chaque trou mettre dans val possible leur valeur possible.
 
+            initPleines(gOrdi, valPossibles, nbValPoss);
+
             for(int i=0;i<gOrdi.length;i++){
                 for (int j= 0;j<gOrdi[i].length;j++){
+
                     if (gOrdi[i][j]==0){
-                        valPossibles[i][j] = ensPlein(9);
-                        nbValPoss[i][j]=9;
                         suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
                     }
 
@@ -601,7 +603,7 @@ public class SudokuBase {
 		 *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
 		 */
 
-		public static int partie(){
+		/*public static int partie(){
 
 
 
