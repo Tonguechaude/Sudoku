@@ -299,6 +299,7 @@ public class SudokuBase {
         */
         public static void saisirGrilleIncompleteFichier(int nbTrous, int [][] g, String fic){
             //_________________________________________________
+            int nbZero = 0;
 
             try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {
                 for (int i = 0 ; i < 9 ; i++){
@@ -306,7 +307,18 @@ public class SudokuBase {
                     String [] valeurs = ligne.split("\\s+");
                     for (int j = 0 ; j < 9 ; j++) {
                         g[i][j] = Integer.parseInt(valeurs[j]);
-                        // Des tests d'erreur sont à ajouter quelque part !
+
+                        if (g[i][j] == 0){
+                            nbZero++;
+                        }
+
+                        if (nbZero != nbTrous){
+                            System.out.println("la grille ne contient pas assez ou trop de trou !");
+                        }
+
+                        if(g[i][j] < 0 | g[i][j] > 9){
+                            System.out.println("La grille contient des valeurs absurdes !" );
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -428,17 +440,15 @@ public class SudokuBase {
 
             initPleines(gOrdi, valPossibles, nbValPoss);
 
-            for(int i=0;i<gOrdi.length;i++){
-                for (int j= 0;j<gOrdi[i].length;j++){
+            for(int i=0;i<gOrdi.length;i++) {
+                for (int j = 0; j < gOrdi[i].length; j++) {
 
-                    if (gOrdi[i][j]==0){
-                        suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
+                    if (gOrdi[i][j] == 0) {
+                        suppValPoss(gOrdi, i, j, valPossibles, nbValPoss);
                     }
-
                 }
             }
-
-        }  // fin initPossibles
+        } // fin initPossibles
 
         //.........................................................................
 
@@ -466,6 +476,7 @@ public class SudokuBase {
                     { 2, 8, 7, 4, 1, 9, 6, 3, 5 },
                     { 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
 
+
             /* demande le nombre de trou */
             int nbTrou = saisirEntierMinMax(0,81);
             copieMatrice(gComplete,gSecret);
@@ -474,7 +485,7 @@ public class SudokuBase {
             initGrilleIncomplete(nbTrou, gSecret,gHumain);
 
 
-            gOrdi = saisirGrilleIncomplete(nbTrou);
+            saisirGrilleIncompleteFichier(nbTrou,gOrdi, ".\\Sudoku2\\grille.txt" );
 
             initPossibles(gOrdi,valPossibles,nbValPoss);
 
@@ -581,7 +592,7 @@ public class SudokuBase {
 			}
             else{
                 nbPenalitee ++;
-                System.out.println("L'ordinateur a choisis de prendre un joker, veuillez lui renseigner la case: " + trou);
+                Ut.afficher("L'ordinateur a choisis de prendre un joker, veuillez lui renseigner la case: " + trou);
                 saisirEntierMinMax(1,9);
             }
 
@@ -603,9 +614,38 @@ public class SudokuBase {
 		 *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
 		 */
 
-		/*public static int partie(){
+		public static int partie(){
 
 
+
+
+            int [][] gSecret= {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
+                               { 6, 7, 2, 1, 9, 5, 3, 4, 8 },
+                               { 1, 9, 8, 3, 4, 2, 5, 6, 7 },
+                               { 8, 5, 9, 7, 6, 1, 4, 2, 3 },
+                               { 4, 2, 6, 8, 5, 3, 7, 9, 1 },
+                               { 7, 1, 3, 9, 2, 4, 8, 5, 6 },
+                               { 9, 6, 1, 5, 3, 7, 2, 8, 4 },
+                               { 2, 8, 7, 4, 1, 9, 6, 3, 5 },
+                               { 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
+
+            int [][] gHumain = new int[gSecret.length][gSecret.length];
+            copieMatrice(gSecret,gHumain);
+
+            int[][] gOrdi = new int[gSecret.length][gSecret.length];
+
+            boolean [][][] valPossible = new boolean [9][9][10];
+
+            int [][] nbValPoss = new int[9][9];
+
+
+
+            initPartie(gSecret, gHumain, gOrdi, valPossible, nbValPoss);
+
+            while(true){
+                tourHumain(gSecret,gHumain);
+                tourOrdinateur(gOrdi,valPossible,nbValPoss);
+            }
 
 		}  // fin partie
 
@@ -619,20 +659,10 @@ public class SudokuBase {
 
         public static void main(String[] args){
 
-            int [][] gSecret= {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
-                    { 6, 7, 2, 1, 9, 5, 3, 4, 8 },
-                    { 1, 9, 8, 3, 4, 2, 5, 6, 7 },
-                    { 8, 5, 9, 7, 6, 1, 4, 2, 3 },
-                    { 4, 2, 6, 8, 5, 3, 7, 9, 1 },
-                    { 7, 1, 3, 9, 2, 4, 8, 5, 6 },
-                    { 9, 6, 1, 5, 3, 7, 2, 8, 4 },
-                    { 2, 8, 7, 4, 1, 9, 6, 3, 5 },
-                    { 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
 
+            //int [][] mat2 = new int[9][9];
 
-            int [][] mat2 = new int[9][9];
-
-            boolean[] tableauplein = {false, true, true, true, true, true, true, true, true, true};
+            //boolean[] tableauplein = {false, true, true, true, true, true, true, true, true, true};
 
             //int[][] gComplete = new int[9][9];
 
@@ -648,21 +678,8 @@ public class SudokuBase {
                     {0, 0, 0, 0, 8, 0, 0, 7, 9}};
 
 
-            int [][] gHumain2 = new int[gOrdi.length][gOrdi.length];
 
-            int[][] gHumain =  {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
-                    { 6, 7, 0, 1, 9, 5, 3, 4, 8 },
-                    { 1, 9, 0, 3, 0, 2, 5, 6, 7 },
-                    { 8, 5, 9, 7, 6, 1, 4, 2, 3 },
-                    { 4, 2, 6, 8, 5, 3, 7, 9, 1 },
-                    { 7, 1, 3, 9, 2, 4, 8, 5, 6 },
-                    { 9, 0, 1, 5, 3, 7, 2, 8, 4 },
-                    { 2, 8, 7, 4, 1, 9, 6, 3, 5 },
-                    { 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
 
-            boolean [][][] valPossible = new boolean [9][9][9];
-
-            int [][] nbValPoss = new int[9][9];
 
 
 
@@ -681,9 +698,10 @@ public class SudokuBase {
             //initPossibles(gOrdi, valPossible,nbValPoss);
             //initPartie(gSecret, gHumain, gOrdi, valPossible, nbValPoss);
             //tourHumain(gSecret, gHumain);
-            afficheGrille(3, gOrdi);
-            System.out.println(" ");
-            System.out.println(chercheTrou(gOrdi,nbValPoss));
+            //afficheGrille(3, gOrdi);
+            //System.out.println(" ");
+            //Ut.afficher(chercheTrou(gOrdi,nbValPoss));
+            partie();
 
 
         }  // fin main
