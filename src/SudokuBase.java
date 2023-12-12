@@ -17,6 +17,7 @@ public class SudokuBase {
         public static int saisirEntierMinMax(int min, int max) {
 
             int nb;
+
             do {
                 System.out.println("Veuillez saisir un nombre compris entre " + min + " et " + max + " : ");
                 nb = Ut.saisirEntier();
@@ -29,6 +30,7 @@ public class SudokuBase {
             }
             while (nb < min || nb > max);
             return nb;
+
         }  // fin saisirEntierMinMax
 
         //.........................................................................
@@ -61,7 +63,6 @@ public class SudokuBase {
             for (int i = 1; i <= n; i++) {
                 ens[i] = true;
             }
-            //Ut.afficher(ens);
             return ens;
         }  // fin ensPlein
 
@@ -181,6 +182,7 @@ public class SudokuBase {
                 Ut.afficherSL("");
             }
             Ut.afficher("---------------------------");
+            System.out.println("");
         }// fin afficheGrille
 
 
@@ -194,17 +196,18 @@ public class SudokuBase {
          */
 
         public static int[] debCarre(int k,int i,int j){
+
             int[] coordDebCarre = new int[2];
             coordDebCarre[0]=(i/k) *k;
             coordDebCarre[1]=(j/k) * k;
-            //Ut.afficher(coordDebCarre);
             return coordDebCarre;
         }  // fin debCarre
 
 
         //.........................................................................
 
-        // Initialisation
+
+    // Initialisation
         //.........................................................................
 
         /** MODIFICI
@@ -349,10 +352,6 @@ public class SudokuBase {
                     }
                 }
             }
-
-            //Ut.afficher(valPossibles);
-            //Ut.afficher(nbValPoss);
-
         }  // fin initPleines
 
         //.........................................................................
@@ -466,27 +465,13 @@ public class SudokuBase {
          */
         public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
 
-            int [][] gComplete =   {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
-                    { 6, 7, 2, 1, 9, 5, 3, 4, 8 },
-                    { 1, 9, 8, 3, 4, 2, 5, 6, 7 },
-                    { 8, 5, 9, 7, 6, 1, 4, 2, 3 },
-                    { 4, 2, 6, 8, 5, 3, 7, 9, 1 },
-                    { 7, 1, 3, 9, 2, 4, 8, 5, 6 },
-                    { 9, 6, 1, 5, 3, 7, 2, 8, 4 },
-                    { 2, 8, 7, 4, 1, 9, 6, 3, 5 },
-                    { 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
 
 
-            /* demande le nombre de trou */
             int nbTrou = saisirEntierMinMax(0,81);
-            copieMatrice(gComplete,gSecret);
-
-
+            initGrilleComplete(gSecret);
             initGrilleIncomplete(nbTrou, gSecret,gHumain);
 
-
             saisirGrilleIncompleteFichier(nbTrou,gOrdi, ".\\Sudoku2\\grille.txt" );
-
             initPossibles(gOrdi,valPossibles,nbValPoss);
 
 			/*Ut.afficher(gHumain);
@@ -515,7 +500,6 @@ public class SudokuBase {
             int i,j;
             do {
                 System.out.println("Veuillez entrée les coordonnées du point que vous voulez modifié en commencant par la ligne puis la colonne: ");
-                System.out.println("");
                 afficheGrille(3, gHumain);
                 System.out.println("");
                 i = saisirEntierMinMax(0, 9);
@@ -588,11 +572,13 @@ public class SudokuBase {
 			int[] trou = chercheTrou(gOrdi, nbValPoss);
 
 			if( nbValPoss[trou[0]][trou[1]] == 1){
-				gOrdi[trou[0]][trou[1]] = nbValPoss[trou[0]][trou[1]];
+				int val = uneValeur(valPossibles[trou[0]][trou[1]]);
+                gOrdi[trou[0]][trou[1]] = val;
 			}
             else{
                 nbPenalitee ++;
-                Ut.afficher("L'ordinateur a choisis de prendre un joker, veuillez lui renseigner la case: " + trou);
+                Ut.afficher("L'ordinateur a choisis de prendre un joker, veuillez lui renseigner la case: ");
+                Ut.afficherSL(trou);
                 saisirEntierMinMax(1,9);
             }
 
@@ -616,35 +602,19 @@ public class SudokuBase {
 
 		public static int partie(){
 
+            int[][] gSecret = new int[9][9];
+            int[][] gHumain = new int[9][9];
+            int[][] gOrdi = new int[9][9];
+            boolean[][][] valPossibles = new boolean[9][9][10];
+            int[][] nbValPoss = new int[9][9];
 
 
 
-            int [][] gSecret= {{ 5, 3, 4, 6, 7, 8, 9, 1, 2 },
-                               { 6, 7, 2, 1, 9, 5, 3, 4, 8 },
-                               { 1, 9, 8, 3, 4, 2, 5, 6, 7 },
-                               { 8, 5, 9, 7, 6, 1, 4, 2, 3 },
-                               { 4, 2, 6, 8, 5, 3, 7, 9, 1 },
-                               { 7, 1, 3, 9, 2, 4, 8, 5, 6 },
-                               { 9, 6, 1, 5, 3, 7, 2, 8, 4 },
-                               { 2, 8, 7, 4, 1, 9, 6, 3, 5 },
-                               { 3, 4, 5, 2, 8, 6, 1, 7, 9 }};
-
-            int [][] gHumain = new int[gSecret.length][gSecret.length];
-            copieMatrice(gSecret,gHumain);
-
-            int[][] gOrdi = new int[gSecret.length][gSecret.length];
-
-            boolean [][][] valPossible = new boolean [9][9][10];
-
-            int [][] nbValPoss = new int[9][9];
-
-
-
-            initPartie(gSecret, gHumain, gOrdi, valPossible, nbValPoss);
+            initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
 
             while(true){
                 tourHumain(gSecret,gHumain);
-                tourOrdinateur(gOrdi,valPossible,nbValPoss);
+                tourOrdinateur(gOrdi,valPossibles,nbValPoss);
             }
 
 		}  // fin partie
@@ -660,29 +630,17 @@ public class SudokuBase {
         public static void main(String[] args){
 
 
-            //int [][] mat2 = new int[9][9];
+            int resultat = partie();
 
-            //boolean[] tableauplein = {false, true, true, true, true, true, true, true, true, true};
-
-            //int[][] gComplete = new int[9][9];
-
-
-            int[][] gOrdi       =  {{5, 3, 0, 0, 7, 0, 0, 0, 0},
-                    {6, 0, 0, 1, 9, 5, 0, 0, 0},
-                    {0, 9, 8, 0, 0, 0, 0, 6, 0},
-                    {8, 0, 0, 0, 6, 0, 0, 0, 3},
-                    {4, 0, 0, 8, 0, 3, 0, 0, 1},
-                    {7, 0, 0, 0, 2, 0, 0, 0, 6},
-                    {0, 6, 0, 0, 0, 0, 2, 8, 0},
-                    {0, 0, 0, 4, 1, 9, 0, 0, 5},
-                    {0, 0, 0, 0, 8, 0, 0, 7, 9}};
-
-
-
-
-
-
-
+            if ( resultat == 0){
+                System.out.println("match nul !");
+            }
+            else if (resultat == 1){
+                System.out.println("l'humain a gagné !");
+            }
+            else {
+                System.out.println("L'ordinateur a gagné !");
+            }
 
             //saisirEntierMinMax(2,90);
             //copieMatrice(mat1,mat2);
@@ -701,7 +659,6 @@ public class SudokuBase {
             //afficheGrille(3, gOrdi);
             //System.out.println(" ");
             //Ut.afficher(chercheTrou(gOrdi,nbValPoss));
-            partie();
 
 
         }  // fin main
