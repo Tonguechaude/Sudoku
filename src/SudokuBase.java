@@ -605,12 +605,32 @@ public class SudokuBase {
 
 
 
-            initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
+            int nbTrou = initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss);
+            int nbPenalitesHumain = 0;
+            int nbPenalitesOrdi = 0;
 
-            while(true){
-                tourHumain(gSecret,gHumain);
-                tourOrdinateur(gOrdi,valPossibles,nbValPoss);
+            int tour = 1;
+
+            while(tour <= nbTrou * 2){
+
+                if(tour % 2 == 1) {
+                    nbPenalitesHumain = tourHumain(gSecret,gHumain);
+                }
+                else{
+                    nbPenalitesOrdi = tourOrdinateur(gOrdi,valPossibles,nbValPoss);
+                }
+                tour++;
             }
+
+            if (nbPenalitesHumain < nbPenalitesOrdi) {
+                return 1;
+            } else if (nbPenalitesHumain > nbPenalitesOrdi) {
+                return 2;
+            } else {
+                return 0;
+            }
+
+
 
 		}  // fin partie
 
