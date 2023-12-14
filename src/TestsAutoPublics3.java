@@ -1,10 +1,6 @@
 
 
-    import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+    import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -12,9 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.*;
 
-import java.util.Arrays;
-
-public class TestsAutoPublics3 {
+    public class TestsAutoPublics3 {
 
         public static void main(String[] args) {
 
@@ -73,7 +67,7 @@ public class TestsAutoPublics3 {
             int[][] m2 = { {6,6},
                     {6,6},
                     {6,6} };
-            SudokuBase.copieMatrice(m1,m2);
+            SudokuBase1.copieMatrice(m1,m2);
             for (int i = 0 ; i < m1.length ; i++) {
                 for (int j = 0 ; j < m1[0].length ; j++) {
                     if (m1[i][j] != m2[i][j]) return 0;
@@ -83,7 +77,7 @@ public class TestsAutoPublics3 {
         }
 
         private static double testEnsPlein() {
-            boolean [] res = SudokuBase.ensPlein(12);
+            boolean [] res = SudokuBase1.ensPlein(12);
 
             if (res.length != 13) return 0;
 
@@ -95,7 +89,7 @@ public class TestsAutoPublics3 {
 
         private static double testSupprime() {
             boolean [] ens = {true, false, false, true};
-            boolean res = SudokuBase.supprime(ens, 3);
+            boolean res = SudokuBase1.supprime(ens, 3);
             if (! res) return 0;
             if (ens[3]) return 0;
             return 1;
@@ -103,7 +97,7 @@ public class TestsAutoPublics3 {
 
         private static double testUneValeur() {
             boolean [] ens = {true, false, false, true};
-            int res = SudokuBase.uneValeur(ens);
+            int res = SudokuBase1.uneValeur(ens);
             if (res == 3)
                 return 1;
             else
@@ -111,7 +105,7 @@ public class TestsAutoPublics3 {
         }
 
         private static double testDebCarre() {
-            int [] coords = SudokuBase.debCarre(3,5,7);
+            int [] coords = SudokuBase1.debCarre(3,5,7);
             if ( coords[0] == 3 && coords[1] == 6)
                 return 1;
             else
@@ -120,7 +114,7 @@ public class TestsAutoPublics3 {
 
         private static double testInitGrilleComplete() {
             int [][] g = new int[9][9];
-            SudokuBase.initGrilleComplete(g);
+            SudokuBase1.initGrilleComplete(g);
             for (int [] ligne : g) {
                 for (int val : ligne) {
                     if (val <= 0) return 0;
@@ -141,7 +135,7 @@ public class TestsAutoPublics3 {
                     {9,1,2,3,4,5,6,7,8} };
             int [][] gi = new int[9][9];
 
-            SudokuBase.initGrilleIncomplete(73,gc,gi);
+            SudokuBase1.initGrilleIncomplete(73,gc,gi);
 
             int nbTrous = 0;
             for (int [] ligne : gi) {
@@ -171,7 +165,7 @@ public class TestsAutoPublics3 {
 
             boolean[][][] valPossibles = new  boolean[9][9][10];
             int [][] nbValPoss = new int[9][9];
-            SudokuBase.initPleines(gOrdi, valPossibles, nbValPoss);
+            SudokuBase1.initPleines(gOrdi, valPossibles, nbValPoss);
 
             if(!valPossibles[0][6][3] | nbValPoss[0][6] != 9)
                 return 0;
@@ -200,7 +194,7 @@ public class TestsAutoPublics3 {
 
             gOrdi[1][4] = 8;
 
-            SudokuBase.suppValPoss(gOrdi,1,4,valPossibles, nbValPoss);
+            SudokuBase1.suppValPoss(gOrdi,1,4,valPossibles, nbValPoss);
 
             if ( valPossibles[1][7][8]  | nbValPoss[1][7] != 0 |
                     valPossibles[5][4][8]  | nbValPoss[5][4] != 0 |
@@ -230,7 +224,7 @@ public class TestsAutoPublics3 {
 
             gOrdi[1][4]=8;
 
-            SudokuBase.initPossibles(gOrdi,valPossibles, nbValPoss);
+            SudokuBase1.initPossibles(gOrdi,valPossibles, nbValPoss);
 
 
             if(valPossibles[1][7][8]  | nbValPoss[1][7] !=8 |
@@ -268,7 +262,7 @@ public class TestsAutoPublics3 {
             nbValPoss[6][4] = 1;
             nbValPoss[6][5] = 1;
 
-            int[] t = SudokuBase.chercheTrou(gOrdi,nbValPoss);
+            int[] t = SudokuBase1.chercheTrou(gOrdi,nbValPoss);
 
             if (t[0] !=6 || t[1] != 4)
                 return 0;
